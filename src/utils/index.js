@@ -41,34 +41,6 @@ const getInitialData = () => [
     createdAt: "2025-05-20T04:27:34.572Z",
     archived: false,
   },
-  {
-    id: 7,
-    title: "Keindahan Alam",
-    body: "Menikmati keindahan alam, seperti matahari terbenam atau pegunungan, dapat memberikan ketenangan jiwa dan mengurangi stres dalam kehidupan sehari-hari.",
-    createdAt: "2025-05-25T04:27:34.572Z",
-    archived: false,
-  },
-  {
-    id: 8,
-    title: "Membangun Kebiasaan Membaca",
-    body: "Membaca buku secara rutin dapat memperkaya wawasan dan meningkatkan kreativitas. Cobalah untuk membaca setidaknya 20 menit setiap hari.",
-    createdAt: "2025-06-01T04:27:34.572Z",
-    archived: true,
-  },
-  {
-    id: 9,
-    title: "Kesehatan Mental",
-    body: "Penting untuk menjaga kesehatan mental dengan cara seperti meditasi, berolahraga, atau hanya sekedar meluangkan waktu untuk diri sendiri.",
-    createdAt: "2025-06-05T04:27:34.572Z",
-    archived: false,
-  },
-  {
-    id: 10,
-    title: "Menjaga Hubungan Sosial",
-    body: "Memelihara hubungan dengan teman dan keluarga adalah kunci kebahagiaan dan kesejahteraan. Luangkan waktu untuk berbicara dan saling mendukung.",
-    createdAt: "2025-06-10T04:27:34.572Z",
-    archived: true,
-  },
 ];
 
 const showFormattedDate = (date) => {
