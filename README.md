@@ -1,34 +1,81 @@
-# Aplikasi Catatan Pribadi
+# Personal Notes App (Phase 2)
 
-Aplikasi catatan pribadi berbasis React yang dibangun sebagai submission untuk kelas **Belajar Membuat Aplikasi Web dengan React**.
+Aplikasi catatan pribadi berbasis React yang sudah di-upgrade ke **Phase 2** dengan integrasi REST API Dicoding, autentikasi pengguna, proteksi halaman, tema, bahasa, dan UI neo-brutalism yang lebih clean.
 
 ## Live Demo
 
 Anda dapat melihat live demo dari projek ini di link berikut.
 [https://belajar-membuat-web-dengan-react.netlify.app](https://belajar-membuat-web-dengan-react.netlify.app)
 
-## Fitur
+## Fitur Utama
 
-- Tambah catatan baru dengan judul dan isi
-- Hapus catatan
-- Arsipkan & batalkan arsip catatan
-- Pencarian catatan secara real-time (case-insensitive)
-- Highlight kata kunci pencarian pada judul dan isi
-- Pengelompokan catatan berdasarkan bulan dan tahun
-- Character counter dinamis pada input judul (maks. 50 karakter)
-- Validasi form: isi catatan minimal 10 karakter
+- Registrasi dan login user via API.
+- Menyimpan access token ke `localStorage`.
+- Proteksi route (halaman notes/detail hanya untuk user login).
+- Logout dan reset sesi.
+- Menampilkan catatan aktif & arsip dari API.
+- Tambah, hapus, arsip, batal arsip catatan.
+- Halaman detail catatan (`/notes/:id`).
+- Pencarian real-time + highlight keyword.
+- Grouping catatan per bulan/tahun.
+- Validasi input catatan (judul max 50 karakter, isi minimal 10 karakter).
+- Loading indicator untuk proses fetch data.
+- Ubah tema `light/dark` dengan persistensi.
+- Ubah bahasa `id/en` dengan persistensi.
 
-## Teknologi
+## Stack
 
 - React
+- React Router DOM
 - Vite
-- JavaScript ES6+
+- ESLint (Dicoding config)
+- Fetch API
 
-## Cara Menjalankan
+## Integrasi API
+
+Semua helper API ada di:
+
+- `src/utils/network-data.js`
+
+Helper yang digunakan:
+
+- `register`, `login`, `getUserLogged`
+- `getActiveNotes`, `getArchivedNotes`, `getNote`
+- `addNote`, `deleteNote`, `archiveNote`, `unarchiveNote`
+- `getAccessToken`, `putAccessToken`
+
+Base URL API:
+
+- `https://notes-api.dicoding.dev/v1`
+
+## Struktur Singkat
+
+```bash
+src/
+├── App.jsx
+├── components/
+├── contexts/
+├── hooks/
+├── pages/
+├── styles/
+└── utils/
+    ├── dictionaries.js
+    ├── index.js
+    └── network-data.js
+```
+
+## Routing
+
+- `/login` → halaman login
+- `/register` → halaman registrasi
+- `/notes` → daftar catatan (protected)
+- `/notes/:id` → detail catatan (protected)
+
+## Menjalankan Project
 
 ### Prasyarat
 
-- Node.js versi 18 atau lebih baru
+- Node.js 18+
 
 ### Instalasi
 
@@ -42,31 +89,33 @@ npm install
 npm run dev
 ```
 
-Buka [http://localhost:5173](http://localhost:5173) di browser.
+Buka: `http://localhost:5173`
 
-### Build
+### Build Production
 
 ```bash
 npm run build
 ```
 
-## Struktur Komponen
+### Preview Build
 
+```bash
+npm run serve
 ```
-src/
-└── components/
-    ├── App.jsx              # Root component, state management
-    ├── NoteSearch.jsx       # Input pencarian
-    ├── NoteInput.jsx        # Form tambah catatan
-    ├── NotesList.jsx        # Daftar catatan dengan grouping bulan-tahun
-    ├── NoteItem.jsx         # Item catatan individual
-    └── NoteActionButton.jsx # Tombol aksi reusable (hapus / arsip)
-```
+
+## Penyimpanan Lokal
+
+Aplikasi menggunakan `localStorage` untuk:
+
+- `accessToken`
+- `theme`
+- `locale`
 
 ## AI Attribution / Acknowledgements
 
-Dalam pengerjaan proyek ini, saya menggunakan bantuan AI untuk:
+Dalam pengerjaan proyek ini, saya menggunakan bantuan AI sebagai **asisten**, dengan batasan bahwa keputusan akhir, penyesuaian, pengerjaan, dan validasi tetap dilakukan secara manual.
 
-- **Membuat file README.md** – AI menulis dokumentasi proyek, termasuk cara penggunaan, instalasi, dan fitur utama.
-- **Menambahkan contoh data di file `index.js`** – AI menyarankan data contoh untuk mempermudah pengujian.
-- **Brainstorming fitur** – AI membantu memverifikasi ide untuk aplikasi.
+Ruang lingkup bantuan AI:
+
+- **Perencanaan implementasi Phase 2**: membantu merinci langkah kerja untuk auth, protected route, context, dan integrasi API.
+- **Refactor & dokumentasi kode**: membantu mempercepat penulisan ulang komponen dan pembaruan `README.md`.
