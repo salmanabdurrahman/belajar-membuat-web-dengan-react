@@ -1,36 +1,25 @@
 import React from "react";
+import { useLocale } from "../contexts/LocaleContext";
 
-class NoteSearch extends React.Component {
-  constructor(props) {
-    super(props);
+function NoteSearch({ searchKeyword, onSearch }) {
+  const { dictionary } = useLocale();
 
-    this.state = {
-      searchKeyword: "",
-    };
-
-    this.onSearchChangeHandler = this.onSearchChangeHandler.bind(this);
-  }
-
-  onSearchChangeHandler(event) {
-    const keyword = event.target.value;
-    this.setState({ searchKeyword: keyword });
-    this.props.onSearch(keyword);
-  }
-
-  render() {
-    return (
-      <div className="note-search" data-testid="note-search">
-        <input
-          className="note-search__input"
-          type="text"
-          placeholder="Cari catatan ..."
-          value={this.state.searchKeyword}
-          onChange={this.onSearchChangeHandler}
-          data-testid="note-search-input"
-        />
-      </div>
-    );
-  }
+  return (
+    <div className="note-search" data-testid="note-search">
+      <label htmlFor="note-search-input" className="note-search__label">
+        {dictionary.notes.searchPlaceholder}
+      </label>
+      <input
+        id="note-search-input"
+        className="note-search__input"
+        type="text"
+        placeholder={dictionary.notes.searchPlaceholder}
+        value={searchKeyword}
+        onChange={(event) => onSearch(event.target.value)}
+        data-testid="note-search-input"
+      />
+    </div>
+  );
 }
 
 export default NoteSearch;

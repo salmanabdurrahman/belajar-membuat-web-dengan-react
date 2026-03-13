@@ -1,93 +1,97 @@
-import React from "react";
+import React, { useState } from "react";
+import { useLocale } from "../contexts/LocaleContext";
 
-class NoteInput extends React.Component {
-  constructor(props) {
-    super(props);
+const TITLE_CHAR_LIMIT = 50;
+const BODY_MIN_LENGTH = 10;
 
-    this.state = {
-      title: "",
-      body: "",
-      bodyError: false,
-    };
+function NoteInput({ onAddNote, isSubmitting }) {
+  const { dictionary } = useLocale();
+  const [title, setTitle] = useState("");
+  const [body, setBody] = useState("");
+  const [submitted, setSubmitted] = useState(false);
 
-    this.onTitleChangeEventHandler = this.onTitleChangeEventHandler.bind(this);
-    this.onBodyChangeEventHandler = this.onBodyChangeEventHandler.bind(this);
-    this.onSubmitEventHandler = this.onSubmitEventHandler.bind(this);
-  }
+  const remainingChars = TITLE_CHAR_LIMIT - title.length;
+  const trimmedBody = body.trim();
+  const hasBodyError =
+    (submitted || body.length > 0) && trimmedBody.length < BODY_MIN_LENGTH;
 
-  onTitleChangeEventHandler(event) {
+  function onTitleChange(event) {
     const value = event.target.value;
-    if (value.length <= 50) {
-      this.setState({ title: value });
+    if (value.length <= TITLE_CHAR_LIMIT) {
+      setTitle(value);
     }
   }
 
-  onBodyChangeEventHandler(event) {
-    this.setState({ body: event.target.value });
+  function onBodyChange(event) {
+    setBody(event.target.value);
   }
 
-  onSubmitEventHandler(event) {
+  async function onSubmit(event) {
     event.preventDefault();
+    setSubmitted(true);
 
-    const { title, body } = this.state;
-
-    if (body.length < 10) {
-      this.setState({ bodyError: true });
+    if (!title.trim() || trimmedBody.length < BODY_MIN_LENGTH) {
       return;
     }
 
-    this.props.addNote({ title, body });
-    this.setState({ title: "", body: "", bodyError: false });
+    const result = await onAddNote({
+      title: title.trim(),
+      body: trimmedBody,
+    });
+
+    if (result?.error) {
+      return;
+    }
+
+    setTitle("");
+    setBody("");
+    setSubmitted(false);
   }
 
-  render() {
-    const { title, body, bodyError } = this.state;
-    const remainingChars = 50 - title.length;
-
-    return (
-      <div className="note-input" data-testid="note-input">
-        <h2>Buat catatan</h2>
-
-        {body.length > 0 && body.length < 10 && (
-          <p className="note-input__feedback--error">
-            Isi catatan minimal harus 10 karakter
-          </p>
-        )}
-
-        <form
-          onSubmit={this.onSubmitEventHandler}
-          data-testid="note-input-form"
+  return (
+    <div className="note-input" data-testid="note-input">
+      <h2>{dictionary.notes.createTitle}</h2>
+      {hasBodyError && (
+        <p className="note-input__feedback--error">
+          {dictionary.notes.minBodyError}
+        </p>
+      )}
+      <form onSubmit={onSubmit} data-testid="note-input-form">
+        <p
+          className="note-input__title__char-limit"
+          data-testid="note-input-title-remaining"
         >
-          <p
-            className="note-input__title__char-limit"
-            data-testid="note-input-title-remaining"
-          >
-            {remainingChars} karakter tersisa
-          </p>
-          <input
-            className="note-input__title"
-            type="text"
-            placeholder="Ini adalah judul ..."
-            value={title}
-            onChange={this.onTitleChangeEventHandler}
-            required
-            data-testid="note-input-title-field"
-          />
-          <textarea
-            className="note-input__body"
-            placeholder="Tuliskan catatanmu di sini ..."
-            value={body}
-            onChange={this.onBodyChangeEventHandler}
-            required
-            data-testid="note-input-body-field"
-          />
-          <button type="submit" data-testid="note-input-submit-button">
-            Buat
-          </button>
-        </form>
-      </div>
-    );
-  }
+          {remainingChars} {dictionary.notes.titleRemaining}
+        </p>
+        <input
+          className="note-input__title"
+          type="text"
+          placeholder={dictionary.notes.titlePlaceholder}
+          value={title}
+          onChange={onTitleChange}
+          required
+          data-testid="note-input-title-field"
+        />
+        <textarea
+          className="note-input__body"
+          placeholder={dictionary.notes.bodyPlaceholder}
+          value={body}
+          onChange={onBodyChange}
+          required
+          data-testid="note-input-body-field"
+        />
+        <button
+          type="submit"
+          disabled={isSubmitting}
+          data-testid="note-input-submit-button"
+        >
+          {isSubmitting
+            ? dictionary.status.processing
+            : dictionary.notes.submitButton}
+        </button>
+      </form>
+    </div>
+  );
 }
 
 export default NoteInput;

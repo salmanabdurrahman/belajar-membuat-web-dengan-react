@@ -1,29 +1,33 @@
 import React from "react";
+import { useLocale } from "../contexts/LocaleContext";
+import { toLocaleCode } from "../utils/dictionaries";
 import NoteItem from "./NoteItem";
 
-function formatGroupHeader(groupKey) {
+function formatGroupHeader(groupKey, locale) {
   const [year, month] = groupKey.split("-");
   const date = new Date(Number(year), Number(month) - 1, 1);
-  return date.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+
+  return date.toLocaleDateString(toLocaleCode(locale), {
+    month: "long",
+    year: "numeric",
+  });
 }
 
 function NotesList({
   notes,
   onDelete,
   onArchive,
-  dataTestId = "notes-list",
   searchKeyword,
+  processingNoteId,
 }) {
+  const { locale, dictionary } = useLocale();
   const hasNotes = Array.isArray(notes) && notes.length > 0;
 
   if (!hasNotes) {
     return (
-      <div className="notes-list" data-testid={dataTestId}>
-        <p
-          className="notes-list__empty-message"
-          data-testid={`${dataTestId}-empty`}
-        >
-          Tidak ada catatan
+      <div className="notes-list" data-testid="notes-list">
+        <p className="notes-list__empty-message" data-testid="notes-list-empty">
+          {dictionary.notes.noNotes}
         </p>
       </div>
     );
@@ -38,8 +42,8 @@ function NotesList({
     if (!groups[groupKey]) {
       groups[groupKey] = [];
     }
-    groups[groupKey].push(note);
 
+    groups[groupKey].push(note);
     return groups;
   }, {});
 
@@ -48,28 +52,39 @@ function NotesList({
   );
 
   return (
-    <div className="notes-list" data-testid={dataTestId}>
+    <div className="notes-list" data-testid="notes-list">
       {sortedGroupKeys.map((groupKey) => {
         const groupNotes = groupedNotes[groupKey];
+
         return (
           <section
             key={groupKey}
-            data-testid={`${groupKey}-group`}
             className="notes-group"
+            data-testid={`${groupKey}-group`}
           >
-            <h3>{formatGroupHeader(groupKey)}</h3>
-            <span data-testid={`${groupKey}-group-count`}>
-              {groupNotes.length} catatan
-            </span>
-            {groupNotes.map((note) => (
-              <NoteItem
-                key={note.id}
-                note={note}
-                onDelete={onDelete}
-                onArchive={onArchive}
-                searchKeyword={searchKeyword}
-              />
-            ))}
+            <div className="notes-group__header">
+              <h3 className="notes-group__title">
+                {formatGroupHeader(groupKey, locale)}
+              </h3>
+              <span
+                className="notes-group__count"
+                data-testid={`${groupKey}-group-count`}
+              >
+                {groupNotes.length}
+              </span>
+            </div>
+            <div className="notes-group__items">
+              {groupNotes.map((note) => (
+                <NoteItem
+                  key={note.id}
+                  note={note}
+                  onDelete={onDelete}
+                  onArchive={onArchive}
+                  searchKeyword={searchKeyword}
+                  isProcessing={processingNoteId === note.id}
+                />
+              ))}
+            </div>
           </section>
         );
       })}
